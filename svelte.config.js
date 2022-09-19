@@ -3,7 +3,9 @@ import preprocess from "svelte-preprocess";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	adapter: adapter(),
+	kit: {
+		adapter: adapter(),
+	},
 	preprocess: [
 		preprocess({
 			postcss: true,
