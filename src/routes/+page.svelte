@@ -52,7 +52,7 @@
 	};
 </script>
 
-<h1 class="text-4xl mb-3"><a href on:click={() => (currentNote = '')}>Noosphere Simulator</a></h1>
+<h1 class="text-4xl my-5"><a href on:click={() => (currentNote = '')}>Noosphere Simulator</a></h1>
 
 <div class="bg-slate-200">
 	{#if currentView === 'note'}
