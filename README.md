@@ -1,38 +1,21 @@
-# create-svelte
+# Noosphere Simulator
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+An in-browser simulator for [Noosphere](), a massively-multiplayer knowledge graph protocol by [@gordonbrander](https://twitter.com/gordonbrander) and [@0xcda7a](https://twitter.com/0xcda7a).
 
-## Creating a project
+This is a "build in order to learn" project. Maybe one day it grows up to be an interactive explainer for how Noosphere works, but right now it's merely to aid my own understanding. Caveat emptor!
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Running it
 
 ```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
 ## Building
 
-To create a production version of your app:
+To create a production build of the app:
 
 ```bash
 npm run build
 ```
 
 You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
