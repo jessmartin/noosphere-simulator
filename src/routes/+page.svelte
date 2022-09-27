@@ -3,7 +3,7 @@
 
 	import { onMount } from 'svelte';
 	import { populateSphere, addNote } from '../lib/utils';
-	import { sphereStore as sphere, ipfsStore as ipfs } from '../stores';
+	import { sphereStore as sphere, ipfsStore } from '../stores';
 
 	// View-related stuff
 	let currentNote = '';
@@ -21,14 +21,25 @@
 		newNoteContent = '';
 	};
 
+	let sphereStore = {};
+	const unsubscribeSphere = sphere.subscribe((value) => {
+		sphereStore = value;
+	});
+
+	let ipfs;
+	const unsubscribeIpfs = ipfsStore.subscribe((value) => {
+		ipfs = value;
+	});
+
 	const fetchNote = (currentNote) => {
-		const noteCID = sphere.links[currentNote];
-		return sphere.notes[noteCID];
+		const noteCID = sphereStore.links[currentNote];
+		return sphereStore.notes[noteCID];
 	};
 
 	const fetchNoteContent = (currentNote) => {
-		const noteCID = sphere.links[currentNote];
-		const contentCID = sphere.notes[noteCID].contentCID;
+		const noteCID = sphereStore.links[currentNote];
+		const contentCID = sphereStore.notes[noteCID].contentCID;
+		console.log('fetching note content');
 		return ipfs[contentCID];
 	};
 </script>

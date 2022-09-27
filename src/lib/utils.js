@@ -39,7 +39,7 @@ export const addNote = async (title, content) => {
 
   // Add the file content to "IPFS"
   ipfsStore.update(ipfs => {
-    ipfs.contentCid = content;
+    ipfs[contentCid] = content;
     return ipfs;
   });
 };
