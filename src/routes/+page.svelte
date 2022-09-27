@@ -1,59 +1,9 @@
 <script>
-	import { CID } from 'multiformats/cid';
-	import * as json from 'multiformats/codecs/json';
-	import { sha256 } from 'multiformats/hashes/sha2';
-	import { base64 } from 'multiformats/bases/base64';
+	console.log('+page.svelte is loading...');
 
 	import { onMount } from 'svelte';
-
-	let sphere = {
-		title: "Bob's notebook",
-		links: {},
-		notes: {},
-		names: []
-	};
-
-	// This is essentially a fake IPFS
-	let content = {};
-
-	const generateCidFromObject = async (data) => {
-		const bytes = json.encode(data);
-		const hash = await sha256.digest(bytes);
-		const cid = CID.create(1, json.code, hash);
-		return cid.toString(base64.encoder);
-	};
-
-	onMount(async () => {
-		let catThoughts = 'I love cats. I love every kind of cat.';
-		let catThoughtsCID = await generateCidFromObject(catThoughts);
-		let animalNotes = 'I have strongly felt /cat-thoughts\n\n Dogs are just okay';
-		let animalNotesCID = await generateCidFromObject(animalNotes);
-		content[catThoughtsCID] = catThoughts;
-		content[animalNotesCID] = animalNotes;
-
-		// Generate Seed Data
-		let catThoughtsMemo = {
-			parentCID: null,
-			headers: {
-				title: 'Cat Thoughts'
-			},
-			contentCID: catThoughtsCID // This is text - need a new CID from Text
-		};
-		const catThoughtMemoCID = await generateCidFromObject(catThoughtsMemo);
-		sphere.links['cat-thoughts'] = catThoughtMemoCID;
-		sphere.notes[catThoughtMemoCID] = catThoughtsMemo;
-
-		let animalNotesMemo = {
-			parentCID: null,
-			headers: {
-				title: 'Animal Notes'
-			},
-			contentCID: animalNotesCID // This is text - need a new CID from Text
-		};
-		const animalNotesMemoCID = await generateCidFromObject(animalNotesMemo);
-		sphere.links['animal-notes'] = animalNotesMemoCID;
-		sphere.notes[animalNotesMemoCID] = animalNotesMemo;
-	});
+	import { populateSphere, addNote } from '../lib/utils';
+	import { sphereStore as sphere, ipfsStore as ipfs } from '../stores';
 
 	// View-related stuff
 	let currentNote = '';
@@ -64,26 +14,8 @@
 	let newNoteTitle = '';
 	let newNoteContent = '';
 
-	const addNote = async () => {
-		const newNoteContentCid = await generateCidFromObject(newNoteContent);
-
-		// Create the memo
-		const memo = {
-			parentCID: null, // This is a new note - no previous version
-			headers: {
-				Title: newNoteTitle,
-				Created: new Date().getTime()
-			},
-			contentCID: newNoteContentCid
-		};
-		const memoCID = await generateCidFromObject(memo);
-
-		// Add the memo and content to the sphere
-		sphere.links[newNoteTitle] = memoCID;
-		sphere.notes[memoCID] = memo;
-
-		// Add the file content to "IPFS"
-		content[newNoteContentCid] = newNoteContent;
+	const addNewNote = async (title, content) => {
+		await addNote(newNoteTitle, newNoteContent);
 
 		newNoteTitle = '';
 		newNoteContent = '';
@@ -97,20 +29,20 @@
 	const fetchNoteContent = (currentNote) => {
 		const noteCID = sphere.links[currentNote];
 		const contentCID = sphere.notes[noteCID].contentCID;
-		return content[contentCID];
+		return ipfs[contentCID];
 	};
 </script>
 
-<h1 class="text-4xl my-5"><a href on:click={() => (currentNote = '')}>Noosphere Simulator</a></h1>
+<h2>Notebooks</h2>
 
 <div class="bg-slate-200">
 	{#if currentView === 'note'}
 		{#if currentNote === null || currentNote === ''}
 			<h2 class="border-b-2 p-1 px-2 border-white font-mono font-normal text-sm italic">
-				{sphere.title} • Notes
+				{$sphere.title} • Notes
 			</h2>
 			<ul>
-				{#each Object.entries(sphere.links) as [linkCID, noteCID]}
+				{#each Object.entries($sphere.links) as [linkCID, noteCID]}
 					<li class="p-1 px-2 font-mono">
 						<a href on:click={() => (currentNote = linkCID)}>/{linkCID}</a>
 					</li>
@@ -134,7 +66,7 @@
 							/>
 						</div>
 						<input
-							on:click={addNote}
+							on:click={addNewNote}
 							type="submit"
 							class="mt-2 font-mono hover:cursor-pointer border-2 px-2 border-slate-800 hover:bg-slate-300"
 							value="Add Note"
@@ -154,9 +86,9 @@
 					</li>
 				{/if}
 			</ul>
-		{:else if sphere.links[currentNote]}
+		{:else if $sphere.links[currentNote]}
 			<h2 class="border-b-2 p-1 px-2 border-white font-mono font-normal text-sm italic">
-				{sphere.title} • /{currentNote} ({sphere.links[currentNote]})
+				{$sphere.title} • /{currentNote} ({$sphere.links[currentNote]})
 			</h2>
 			<p class="p-1 px-2 font-mono border-white border-b-2">
 				{fetchNoteContent(currentNote)}
