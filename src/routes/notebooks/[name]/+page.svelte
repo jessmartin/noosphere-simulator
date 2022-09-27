@@ -25,7 +25,10 @@
 	<ul>
 		{#each Object.entries($sphere.links) as [linkCID, noteCID]}
 			<li class="p-1 px-2 font-mono">
-				<a href="/notebooks/bob/notes/{linkCID}">/{linkCID}</a>
+				<a
+					class="underline transition-colors hover:text-purple-700 hover:underline-offset-2"
+					href="/notebooks/bob/notes/{linkCID}">/{linkCID}</a
+				>
 			</li>
 		{/each}
 		{#if createNew}

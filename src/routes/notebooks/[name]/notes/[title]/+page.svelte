@@ -36,7 +36,8 @@
 
 <div class="bg-slate-200">
 	<h2 class="border-b-2 p-1 px-2 border-white font-mono font-normal text-sm italic">
-		{$sphere.title} • /{currentNote} ({$sphere.links[currentNote]})
+		<a class="hover:text-purple-700" href="/notebooks/bob">{$sphere.title}</a> • /{currentNote} ({$sphere
+			.links[currentNote]})
 	</h2>
 	<p class="p-1 px-2 font-mono border-white border-b-2">
 		{fetchNoteContent(currentNote)}

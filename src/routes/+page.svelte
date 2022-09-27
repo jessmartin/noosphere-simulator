@@ -21,7 +21,10 @@
 	<h2 class="border-b-2 p-1 px-2 border-white font-mono font-normal text-sm italic">Spheres</h2>
 	<ul>
 		<li class="p-1 px-2 font-mono">
-			<a href="/notebooks/bob">Bob's Notebook</a>
+			<a
+				class="underline transition-colors hover:text-purple-700 hover:underline-offset-2"
+				href="/notebooks/bob">Bob's Notebook</a
+			>
 		</li>
 		<!-- {#each Object.entries($sphere.links) as [linkCID, noteCID]}
 			<li class="p-1 px-2 font-mono">
