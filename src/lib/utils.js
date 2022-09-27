@@ -29,7 +29,7 @@ export const addNote = async (title, content) => {
 
   // Add the memo and content to the sphere
   sphereStore.update(sphere => {
-    sphere.links[title] = memoCID;
+    sphere.links[title.toLowerCase().replaceAll(" ", "-")] = memoCID;
     return sphere;
   });
   sphereStore.update(sphere => {
@@ -44,16 +44,13 @@ export const addNote = async (title, content) => {
   });
 };
 
+// Generate Seed Data for the sphere so the page doesn't start blank
 export const populateSphere = async () => {
-  console.log('populate the sphere');
-
-  // Generate Seed Data
-
   // Set up the first sphere
   sphereStore.update(sphere => ({ ...sphere, title: "Bob's Notebook" }));
   sphereStore.update(sphere => ({ ...sphere, name: "bob" }));
 
-  // Let's have some notes
+  // Let's add some notes
   let catThoughts = 'I love cats. I love every kind of cat.';
   let animalNotes = 'I have strongly felt /cat-thoughts\n\n Dogs are just okay';
   await addNote('cat-thoughts', catThoughts);
