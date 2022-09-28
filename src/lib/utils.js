@@ -1,7 +1,7 @@
 import { CID } from 'multiformats/cid';
 import * as json from 'multiformats/codecs/json';
 import { sha256 } from 'multiformats/hashes/sha2';
-import { base64 } from 'multiformats/bases/base64';
+import { base64url as base64 } from 'multiformats/bases/base64';
 
 import { sphereStore, ipfsStore } from '../stores';
 
@@ -42,6 +42,37 @@ export const addNote = async (title, content) => {
     ipfs[contentCid] = content;
     return ipfs;
   });
+};
+
+export const editNote = async (noteName, updatedContent) => {
+  const updatedContentCid = await generateCidFromObject(updatedContent);
+
+  let sphere = {};
+  const unsubscribeSphere = sphereStore.subscribe((val) => { sphere = val });
+
+  const memoCid = sphere.links[noteName];
+  const oldMemo = sphere.notes[memoCid];
+
+  const updatedMemo = {
+    parentCID: memoCid,
+    headers: oldMemo.headers,
+    contentCID: updatedContentCid
+  }
+  const updatedMemoCid = await generateCidFromObject(updatedMemo);
+
+  sphereStore.update((sphere) => {
+    sphere.links[noteName] = updatedMemoCid;
+    sphere.notes[updatedMemoCid] = updatedMemo;
+    return sphere;
+  });
+
+  // Store the updated content in IPFS
+  ipfsStore.update(ipfs => {
+    ipfs[updatedContentCid] = updatedContent;
+    return ipfs;
+  });
+
+  unsubscribeSphere();
 };
 
 // Generate Seed Data for the sphere so the page doesn't start blank
