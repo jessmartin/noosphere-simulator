@@ -43,7 +43,7 @@
 
 <div class="bg-slate-200">
 	<h2 class="border-b-2 p-1 px-2 border-white font-mono font-normal text-sm italic">
-		<a class="hover:text-purple-700" href="/notebooks/bob">{noteTitle}</a> • /{noteTitle} ({noteCID})
+		<a class="hover:text-purple-700" href="/notebooks/bob">{sphereStore.title}</a> • /{noteTitle} ({noteCID})
 	</h2>
 	<div class="p-1 px-2  border-b-2 border-white">
 		<h3 class="font-mono font-semibold underline">Content</h3>
