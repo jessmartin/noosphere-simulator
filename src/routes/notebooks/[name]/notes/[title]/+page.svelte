@@ -5,36 +5,34 @@
 	import { editNote } from '/src/lib/utils';
 
 	export let data;
-	let currentNote = data.title;
+	let noteTitle = data.title;
 	let editingNote = false;
 
 	let sphereStore = {};
+	let noteCID = '';
+	let note = { parentCID: '', headers: {}, contentCID: '' };
+	let contentCID = '';
+
 	const unsubscribeSphere = sphere.subscribe((value) => {
 		sphereStore = value;
+		noteCID = sphereStore.links[noteTitle];
+		note = sphereStore.notes[noteCID];
+		contentCID = sphereStore.notes[noteCID].contentCID;
 	});
 
 	let ipfs;
+	let noteContent = '';
 	const unsubscribeIpfs = ipfsStore.subscribe((value) => {
 		ipfs = value;
+		noteContent = ipfs[contentCID];
 	});
 
-	const fetchNote = (currentNote) => {
-		const noteCID = sphereStore.links[currentNote];
-		return sphereStore.notes[noteCID];
-	};
-
-	const fetchNoteContent = (currentNote) => {
-		const noteCID = sphereStore.links[currentNote];
-		const contentCID = sphereStore.notes[noteCID].contentCID;
-		console.log('fetching note content');
-		return ipfs[contentCID];
-	};
-
 	// let editedNoteTitle = data.title;
-	let editedNoteContent = fetchNoteContent(data.title);
+	let editedNoteContent = noteContent;
 
 	const editNoteContent = async () => {
-		await editNote(currentNote, editedNoteContent);
+		await editNote(noteTitle, editedNoteContent);
+		editingNote = false;
 	};
 
 	onDestroy(() => {
@@ -45,13 +43,12 @@
 
 <div class="bg-slate-200">
 	<h2 class="border-b-2 p-1 px-2 border-white font-mono font-normal text-sm italic">
-		<a class="hover:text-purple-700" href="/notebooks/bob">{$sphere.title}</a> • /{currentNote} ({$sphere
-			.links[currentNote]})
+		<a class="hover:text-purple-700" href="/notebooks/bob">{noteTitle}</a> • /{noteTitle} ({noteCID})
 	</h2>
 	<div class="p-1 px-2  border-b-2 border-white">
 		<h3 class="font-mono font-semibold underline">Content</h3>
 		<p class="font-mono">
-			{fetchNoteContent(currentNote)}
+			{noteContent}
 		</p>
 		{#if !editingNote}
 			<button
@@ -99,11 +96,11 @@
 			<div class="bg-purple-400 border-2 border-purple-900 rounded-full w-6 h-6 mx-5 my-2" />
 		</div>
 		<div class="h-32 ">
-			<div class="mx-5 my-2">Parent CID: {fetchNote(currentNote).parentCID}</div>
+			<div class="mx-5 my-2">Parent CID: {note.parentCID}</div>
 			<div class="mx-5 h-10 m-3 flex items-center">
-				Inline Headers: &#123;{Object.entries(fetchNote(currentNote).headers)}&#125;
+				Inline Headers: &#123;{Object.entries(note.headers)}&#125;
 			</div>
-			<div class="mx-5 my-2">Content CID: {fetchNote(currentNote).contentCID}</div>
+			<div class="mx-5 my-2">Content CID: {contentCID}</div>
 		</div>
 	</div>
 </div>
