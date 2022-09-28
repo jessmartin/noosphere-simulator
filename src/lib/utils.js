@@ -1,7 +1,7 @@
 import { CID } from 'multiformats/cid';
 import * as json from 'multiformats/codecs/json';
 import { sha256 } from 'multiformats/hashes/sha2';
-import { base64 } from 'multiformats/bases/base64';
+import { base64url as base64 } from 'multiformats/bases/base64';
 
 import { sphereStore, ipfsStore } from '../stores';
 

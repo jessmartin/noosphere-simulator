@@ -3,6 +3,7 @@
 	import { onDestroy } from 'svelte';
 	import { sphereStore as sphere, ipfsStore } from '/src/stores';
 	import { editNote } from '/src/lib/utils';
+	import { onMount } from 'svelte';
 
 	export let data;
 	let noteTitle = data.title;
@@ -35,6 +36,15 @@
 		editingNote = false;
 	};
 
+	let previousVersion = false;
+	const changeNoteVersion = (versionCID) => {
+		noteCID = versionCID;
+		note = sphereStore.notes[noteCID];
+		contentCID = sphereStore.notes[noteCID].contentCID;
+		noteContent = ipfs[contentCID];
+		previousVersion = true;
+	};
+
 	onDestroy(() => {
 		unsubscribeSphere();
 		unsubscribeIpfs();
@@ -50,7 +60,7 @@
 		<p class="font-mono">
 			{noteContent}
 		</p>
-		{#if !editingNote}
+		{#if !editingNote && !previousVersion}
 			<button
 				class="hover:cursor-pointer border-2 px-2 mt-2 border-slate-800 hover:bg-slate-300"
 				on:click={() => (editingNote = true)}>Edit Note</button
@@ -96,7 +106,18 @@
 			<div class="bg-purple-400 border-2 border-purple-900 rounded-full w-6 h-6 mx-5 my-2" />
 		</div>
 		<div class="h-32 ">
-			<div class="mx-5 my-2">Parent CID: {note.parentCID}</div>
+			<div class="mx-5 my-2">
+				Parent CID:
+				{#if note.parentCID}
+					<a
+						class="hover:text-purple-700"
+						href=""
+						on:click={() => changeNoteVersion(note.parentCID)}>{note.parentCID}</a
+					>
+				{:else}
+					No Parent CID
+				{/if}
+			</div>
 			<div class="mx-5 h-10 m-3 flex items-center">
 				Inline Headers: &#123;{Object.entries(note.headers)}&#125;
 			</div>
