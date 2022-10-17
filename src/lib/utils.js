@@ -87,3 +87,7 @@ export const populateSphere = async () => {
   await addNote('cat-thoughts', catThoughts);
   await addNote('animal-thoughts', animalNotes);
 }
+
+export const formatCID = (CID) => {
+  return `Cid(${CID.substr(0, 8)}...${CID.substr(-8, 8)})`;
+};
